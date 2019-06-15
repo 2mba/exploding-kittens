@@ -4,9 +4,7 @@ import org.tumba.explodingkittens.core.Card
 import org.tumba.explodingkittens.core.CardType
 import kotlin.random.Random
 
-class CardFactory {
-
-    private var random = Random(0)
+class CardFactory(private val random: Random) {
 
     fun create(): Card {
         return Card(
