@@ -1,5 +1,7 @@
 package org.tumba.explodingkittens.core
 
+import kotlin.random.Random
+
 data class Card(
     val id: Long,
     val type: CardType,
@@ -28,11 +30,12 @@ interface CardStack {
     fun put(index: Int, card: Card)
 }
 
-class CardStackImpl(cards: List<Card>) : CardStack {
+class CardStackImpl(
+    cards: List<Card> = emptyList(),
+    private val random: Random
+) : CardStack {
 
     private val cards: MutableList<Card> = cards.toMutableList()
-
-    constructor(): this(emptyList())
 
     override fun pop(): Card {
         if (cards.isEmpty()) throw IllegalStateException("No cards in stack")
@@ -40,19 +43,17 @@ class CardStackImpl(cards: List<Card>) : CardStack {
     }
 
     override fun peek(count: Int): List<Card> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return cards.takeLast(count)
     }
 
-    override fun size(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun size(): Int = cards.size
 
     override fun shuffle() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        cards.shuffle(random)
     }
 
     override fun put(index: Int, card: Card) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        cards.add(index, card)
     }
 }
 
@@ -63,6 +64,23 @@ interface CardDrop {
     fun add(card: Card)
 
     fun remove(index: Int): Card
+}
+
+class CardDropImpl(
+    cards: List<Card> = emptyList()
+) : CardDrop {
+
+    private val cards: MutableList<Card> = cards.toMutableList()
+
+    override fun getAll(): List<Card> = cards
+
+    override fun add(card: Card) {
+        cards.add(card)
+    }
+
+    override fun remove(index: Int): Card {
+        return cards.removeAt(index)
+    }
 }
 
 data class Player(
@@ -81,6 +99,23 @@ interface PlayerHand {
     fun remove(index: Int): Card
 
     fun add(card: Card)
+}
+
+class PlayerHandImpl(
+    cards: List<Card> = emptyList()
+) : PlayerHand {
+
+    private val cards: MutableList<Card> = cards.toMutableList()
+
+    override fun getAll(): List<Card> = cards
+
+    override fun get(index: Int): Card = cards[index]
+
+    override fun remove(index: Int): Card = cards[index]
+
+    override fun add(card: Card) {
+        cards.add(card)
+    }
 }
 
 interface Game {
