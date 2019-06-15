@@ -118,43 +118,6 @@ class PlayerHandImpl(
     }
 }
 
-interface Game {
-
-    val state: GameState
-
-    fun init()
-
-    fun initFrom(state: GameState)
-
-    fun playCard(playerId: Long, cards: List<Card>)
-
-    fun skipPlayCard(playerId: Long)
-
-    fun takeCard(playerId: Long)
-
-    fun returnExplodingCard(playerId: Long, index: Int)
-}
-
-data class GameState(
-    val players: List<Player>,
-    val stack: CardStack,
-    val drop: CardDrop,
-    var intermediateGameState: IntermediateGameState
-)
-
-sealed class IntermediateGameState {
-
-    class PlayCard(playerId: Long) : IntermediateGameState()
-
-    class TakeCard(playerId: Long) : IntermediateGameState()
-
-    class ReturnExplodingCard(playerId: Long) : IntermediateGameState()
-
-    class TakeCardFromPlayer(playerId: Long, fromPlayerId: Long) : IntermediateGameState()
-
-    class GiveCardToPlayer(playerId: Long, playerIdThatShouldGiveCard: Long) : IntermediateGameState()
-}
-
 
 data class PlayerDto(
     val id: Long,
