@@ -23,9 +23,37 @@ interface CardStack {
 
     fun size(): Int
 
-    fun suffle()
+    fun shuffle()
 
     fun put(index: Int, card: Card)
+}
+
+class CardStackImpl(cards: List<Card>) : CardStack {
+
+    private val cards: MutableList<Card> = cards.toMutableList()
+
+    constructor(): this(emptyList())
+
+    override fun pop(): Card {
+        if (cards.isEmpty()) throw IllegalStateException("No cards in stack")
+        return cards.removeAt(cards.lastIndex)
+    }
+
+    override fun peek(count: Int): List<Card> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun size(): Int {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun shuffle() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun put(index: Int, card: Card) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
 
 interface CardDrop {
