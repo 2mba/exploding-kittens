@@ -111,7 +111,9 @@ class PlayerHandImpl(
 
     override fun get(index: Int): Card = cards[index]
 
-    override fun remove(index: Int): Card = cards[index]
+    override fun remove(index: Int): Card {
+        return cards.removeAt(index)
+    }
 
     override fun add(card: Card) {
         cards.add(card)
