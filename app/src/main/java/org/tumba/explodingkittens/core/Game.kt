@@ -38,6 +38,10 @@ class GameManager(private val state: GameState) {
             throw IllegalStateException("Incorrect state for command, state = ${this.state}")
         }
     }
+
+    fun setIntermediateState(state: IntermediateGameState) {
+        this.state.intermediateGameState = state
+    }
 }
 
 interface IntermediateStateMatcher {
