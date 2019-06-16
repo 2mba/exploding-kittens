@@ -14,7 +14,8 @@ enum class CardType {
     EXPLODE,
     DEFUSE,
     LOOK_AT_THE_FUTURE,
-    ATTACK
+    ATTACK,
+    SKIP
 }
 
 interface CardStack {

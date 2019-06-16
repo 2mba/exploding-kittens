@@ -42,6 +42,16 @@ class GameManager(private val state: GameState) {
     fun setIntermediateState(state: IntermediateGameState) {
         this.state.intermediateGameState = state
     }
+
+    fun getPlayerById(id: Long): Player {
+        return state.players.firstOrNull { it.id == id }
+            ?: throw IllegalStateException("No player with id = $id, players = ${state.players}")
+    }
+
+    fun getPlayerCard(player: Player, cardId: Long): Card {
+        return player.hand.getAll().firstOrNull { it.id == cardId }
+            ?: throw IllegalStateException("No card for player with cardId = $cardId, player cards = ${player.hand.getAll()}")
+    }
 }
 
 interface IntermediateStateMatcher {

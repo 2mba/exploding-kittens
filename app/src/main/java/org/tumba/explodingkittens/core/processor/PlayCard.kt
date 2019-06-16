@@ -10,7 +10,9 @@ class PlayCardCommand(
     override val id: String = CommandId.PLAY_CARD
 }
 
-class PlayCardCommandProcessor : TypedGameCommandProcessor<PlayCardCommand>() {
+class PlayCardCommandProcessor(
+    private val playCardProcessors: List<PlayCardProcessor>
+) : TypedGameCommandProcessor<PlayCardCommand>() {
 
     override val commandId: String = CommandId.PLAY_CARD
 
@@ -18,5 +20,39 @@ class PlayCardCommandProcessor : TypedGameCommandProcessor<PlayCardCommand>() {
         gameManager.ensureStateThat(
             EqualTo(IntermediateGameState.PlayCard(command.playerId))
         )
+        val player = gameManager.getPlayerById(command.playerId)
+        val card = gameManager.getPlayerCard(player, command.cardId)
+
+        playCardProcessors.forEach { it.process(player, card, gameState, gameManager) }
+    }
+
+    interface PlayCardProcessor {
+
+        fun process(player: Player, card: Card, gameState: GameState, gameManager: GameManager)
+    }
+}
+
+abstract class SingleCardPlayCardProcessor(
+    private val cardTypeForProcess: CardType
+) : PlayCardCommandProcessor.PlayCardProcessor {
+
+    override fun process(player: Player, card: Card, gameState: GameState, gameManager: GameManager) {
+        if (cardTypeForProcess == card.type) {
+            processCard(player, card, gameState, gameManager)
+        }
+    }
+
+    abstract fun processCard(player: Player, card: Card, gameState: GameState, gameManager: GameManager)
+}
+
+class SkipCardProcessor : SingleCardPlayCardProcessor(CardType.SKIP) {
+
+    override fun processCard(player: Player, card: Card, gameState: GameState, gameManager: GameManager) {
+    }
+}
+
+class AttackCardProcessor : SingleCardPlayCardProcessor(CardType.ATTACK) {
+
+    override fun processCard(player: Player, card: Card, gameState: GameState, gameManager: GameManager) {
     }
 }
