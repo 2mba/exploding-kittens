@@ -3,13 +3,13 @@ version: 2.0
 jobs:
   lint:
     docker:
-      - image: circleci/android
+      - image: circleci/android:api-28
     steps:
       - checkout
       - run: echo "Lint wasn't setup"
   test:
     docker:
-      - image: circleci/android
+      - image: circleci/android:api-28
     steps:
       - checkout
       - run: ./gradlew test
@@ -25,7 +25,7 @@ jobs:
           path: ~/test-results/junit
   build:
     docker:
-      - image: circleci/android
+      - image: circleci/android:api-28
     steps:
       - checkout
       - run: ./gradlew assembleRelease
