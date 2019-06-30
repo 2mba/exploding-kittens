@@ -18,7 +18,7 @@ class PlayCardCommandProcessor(
 
     override fun processTyped(command: PlayCardCommand, gameState: GameState, gameManager: GameManager) {
         gameManager.ensureStateThat(
-            EqualTo(IntermediateGameState.PlayCard(command.playerId))
+            Is(IntermediateGameState.PlayCard::class.java) and { state -> state.playerId == command.playerId }
         )
         val player = gameManager.getPlayerById(command.playerId)
         val card = gameManager.getPlayerCard(player, command.cardId)

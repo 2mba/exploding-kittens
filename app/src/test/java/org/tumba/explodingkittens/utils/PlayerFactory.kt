@@ -3,16 +3,24 @@ package org.tumba.explodingkittens.utils
 import org.tumba.explodingkittens.core.Player
 import kotlin.random.Random
 
+interface PlayerFactory {
 
-class PlayerFactory(private val random: Random) {
+    fun create(): Player
+}
+
+class RandomPlayerFactory(private val random: Random) : PlayerFactory {
 
     private val playerHandFactory: PlayerHandFactory = PlayerHandFactory(random)
 
-    fun create(): Player {
+    override fun create(): Player {
         return Player(
-            random.nextLong(),
-            "PlayerName-" + random.nextInt(),
+            random.nextLong(MAX_RANDOM_INT.toLong()),
+            "PlayerName-" + random.nextInt(MAX_RANDOM_INT),
             true,
             playerHandFactory.create())
+    }
+
+    companion object {
+        private const val MAX_RANDOM_INT = 100
     }
 }

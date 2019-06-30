@@ -18,20 +18,98 @@ data class GameState(
     var intermediateGameState: IntermediateGameState
 )
 
-sealed class IntermediateGameState {
+sealed class IntermediateGameState(
+    val playerId: Long,
+    val numberOfCardToTakeFromStack: Int
+) {
 
-    data class PlayCard(val playerId: Long) : IntermediateGameState()
+    @Suppress("EqualsOrHashCode")
+    class PlayCard(
+        playerId: Long,
+        numberOfCardToTake: Int
+    ) : IntermediateGameState(playerId, numberOfCardToTake) {
 
-    data class TakeCard(val playerId: Long) : IntermediateGameState()
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+            return true
+        }
+    }
 
-    data class ReturnExplodingCard(val playerId: Long) : IntermediateGameState()
+    class TakeCard(
+        playerId: Long,
+        numberOfCardToTakeFromStack: Int
+    ) : IntermediateGameState(playerId, numberOfCardToTakeFromStack)
 
-    data class TakeCardFromPlayer(val playerId: Long, val fromPlayerId: Long) : IntermediateGameState()
+    class ReturnExplodingCard(
+        playerId: Long,
+        numberOfCardToTakeFromStack: Int
+    ) : IntermediateGameState(playerId, numberOfCardToTakeFromStack)
 
-    data class GiveCardToPlayer(val playerId: Long, val playerIdThatShouldGiveCard: Long) : IntermediateGameState()
+    class TakeCardFromPlayer(
+        playerId: Long,
+        numberOfCardToTakeFromStack: Int,
+        val fromPlayerId: Long
+    ) : IntermediateGameState(playerId, numberOfCardToTakeFromStack) {
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            if (!super.equals(other)) return false
+
+            other as TakeCardFromPlayer
+
+            if (fromPlayerId != other.fromPlayerId) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = super.hashCode()
+            result = 31 * result + fromPlayerId.hashCode()
+            return result
+        }
+    }
+
+    class GiveCardToPlayer(
+        playerId: Long,
+        numberOfCardToTakeFromStack: Int,
+        val playerIdThatShouldGiveCard: Long
+    ) : IntermediateGameState(playerId, numberOfCardToTakeFromStack)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as IntermediateGameState
+
+        if (playerId != other.playerId) return false
+        if (numberOfCardToTakeFromStack != other.numberOfCardToTakeFromStack) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = playerId.hashCode()
+        result = 31 * result + numberOfCardToTakeFromStack
+        return result
+    }
+
+    override fun toString(): String {
+        return "IntermediateGameState(playerId=$playerId, numberOfCardToTakeFromStack=$numberOfCardToTakeFromStack)"
+    }
 }
 
 class GameManager(private val state: GameState) {
+
+    fun ensureStateThat(matcher: (IntermediateGameState) -> Boolean) {
+        ensureStateThat(
+            object : IntermediateStateMatcher {
+                override fun matches(state: IntermediateGameState): Boolean = matcher(state)
+            }
+        )
+    }
 
     fun ensureStateThat(matcher: IntermediateStateMatcher) {
         if (!matcher.matches(state.intermediateGameState)) {
@@ -52,16 +130,24 @@ class GameManager(private val state: GameState) {
         return player.hand.getAll().firstOrNull { it.id == cardId }
             ?: throw IllegalStateException("No card for player with cardId = $cardId, player cards = ${player.hand.getAll()}")
     }
-}
 
-interface IntermediateStateMatcher {
+    fun currentPlayer(): Player {
+        return getPlayerById(state.intermediateGameState.playerId)
+    }
 
-    fun matches(state: IntermediateGameState): Boolean
-}
-
-class EqualTo(private val state: IntermediateGameState): IntermediateStateMatcher {
-
-    override fun matches(state: IntermediateGameState): Boolean = this.state == state
+    fun nextPlayer(): Player {
+        val players = state.players
+        return players
+            .indexOfFirst { it.id == state.intermediateGameState.playerId }
+            .let { idx ->
+                (0..(players.size - 2))
+                    .asSequence()
+                    .map { (it + idx + 1) % players.size }
+                    .map { players[it] }
+                    .firstOrNull { it.isAlive }
+                    ?: throw IllegalStateException("No next player")
+            }
+    }
 }
 
 class GameImpl(

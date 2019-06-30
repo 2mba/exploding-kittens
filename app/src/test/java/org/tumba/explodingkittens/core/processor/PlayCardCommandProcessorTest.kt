@@ -17,6 +17,7 @@ class PlayCardCommandProcessorTest {
     private lateinit var gameManager: GameManager
     private lateinit var command: PlayCardCommand
     private lateinit var processor: PlayCardCommandProcessor
+    private lateinit var playCardProcessors: List<PlayCardCommandProcessor.PlayCardProcessor>
 
     @Before
     fun setup() {
@@ -27,8 +28,11 @@ class PlayCardCommandProcessorTest {
         command = mockk()
         every { command.id } returns CommandId.PLAY_CARD
         every { command.playerId } returns gameState.players.first().id
-
-        processor = PlayCardCommandProcessor()
+        playCardProcessors = listOf(
+            SkipCardProcessor(),
+            AttackCardProcessor()
+        )
+        processor = PlayCardCommandProcessor(playCardProcessors)
     }
 
     @Test
@@ -38,13 +42,19 @@ class PlayCardCommandProcessorTest {
 
     @Test(expected = IllegalStateException::class)
     fun `should throw when game state play card by other player`() {
-        gameState.intermediateGameState = IntermediateGameState.PlayCard(gameState.players.last().id)
+        gameState.intermediateGameState = IntermediateGameState.PlayCard(
+            playerId = gameState.players.last().id,
+            numberOfCardToTake = 1
+        )
         processor.process(command, gameState, gameManager)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `should throw when game state not play card`() {
-        gameState.intermediateGameState = IntermediateGameState.TakeCard(gameState.players.last().id)
+        gameState.intermediateGameState = IntermediateGameState.TakeCard(
+            playerId = gameState.players.last().id,
+            numberOfCardToTakeFromStack = 1
+        )
         processor.process(command, gameState, gameManager)
     }
 }

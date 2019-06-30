@@ -7,8 +7,8 @@ import kotlin.random.Random
 
 class GameStateFactory(random: Random) {
 
-    private val playerFactory: PlayerFactory = PlayerFactory(random)
-    private val cardStackFactory: CardStackFactory = CardStackFactory(random)
+    var playerFactory: PlayerFactory = RandomPlayerFactory(random)
+    var cardStackFactory: CardStackFactory = CardStackFactoryImpl(random)
 
     fun create(playersCount: Int): GameState {
         val players = generateSequence { playerFactory.create() }
@@ -21,7 +21,10 @@ class GameStateFactory(random: Random) {
             players,
             stack,
             drop,
-            IntermediateGameState.PlayCard(players.first().id)
+            IntermediateGameState.PlayCard(
+                playerId = players.first().id,
+                numberOfCardToTake = 1
+            )
         )
     }
 }
