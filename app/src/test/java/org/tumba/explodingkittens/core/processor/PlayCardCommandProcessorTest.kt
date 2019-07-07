@@ -28,6 +28,7 @@ class PlayCardCommandProcessorTest {
         command = mockk()
         every { command.id } returns CommandId.PLAY_CARD
         every { command.playerId } returns gameState.players.first().id
+        every { command.cardId } returns gameState.players.first().hand.getAll().first().id
         playCardProcessors = listOf(
             SkipCardProcessor(),
             AttackCardProcessor()
