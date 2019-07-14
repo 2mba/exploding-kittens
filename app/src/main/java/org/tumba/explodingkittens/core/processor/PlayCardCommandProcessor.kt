@@ -48,6 +48,11 @@ abstract class SingleCardPlayCardProcessor(
 class SkipCardProcessor : SingleCardPlayCardProcessor(CardType.SKIP) {
 
     override fun processCard(player: Player, card: Card, gameState: GameState, gameManager: GameManager) {
+        val newState = IntermediateGameState.PlayCard(
+            playerId = gameManager.nextPlayer().id,
+            numberOfCardToTake = gameState.intermediateGameState.numberOfCardToTakeFromStack
+        )
+        gameManager.setIntermediateState(newState)
     }
 }
 

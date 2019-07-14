@@ -1,7 +1,5 @@
 package org.tumba.explodingkittens.core.processor
 
-import io.mockk.every
-import io.mockk.mockk
 import org.amshove.kluent.`should equal`
 import org.junit.Before
 import org.junit.Test
@@ -66,12 +64,35 @@ class PlayCardCommandProcessorTest {
     }
 
     @Test
-    fun `should set turn to next player and when played attack card`() {
+    fun `should set turn to next player and increment cards to take when played attack card`() {
+        initGameWithPlayersThatHaveOneCard(CardType.ATTACK)
+
+        processor.process(command, gameState, gameManager)
+
+        gameState.intermediateGameState `should equal` IntermediateGameState.PlayCard(
+            playerId = gameState.players[1].id,
+            numberOfCardToTake = 2
+        )
+    }
+
+    @Test
+    fun `should set turn to next player and when played skip card`() {
+        initGameWithPlayersThatHaveOneCard(CardType.SKIP)
+
+        processor.process(command, gameState, gameManager)
+
+        gameState.intermediateGameState `should equal` IntermediateGameState.PlayCard(
+            playerId = gameState.players[1].id,
+            numberOfCardToTake = 1
+        )
+    }
+
+    private fun initGameWithPlayersThatHaveOneCard(cardType: CardType) {
         gameStateFactory = GameStateFactory(random).apply {
             playerFactory = PlayerFactoryImpl(random).apply {
-                playerHandFactory = OneHandPlayerHandFactory(
-                    hand = PlayerHandImpl(listOf(cardFactory.createOfType(CardType.ATTACK)))
-                )
+                playerHandFactory = PlayerHandFactory.create {
+                    PlayerHandImpl(listOf(cardFactory.createOfType(cardType)))
+                }
             }
         }
         gameState = gameStateFactory.create(playersCount = 3)
@@ -84,13 +105,6 @@ class PlayCardCommandProcessorTest {
         gameState.intermediateGameState = IntermediateGameState.PlayCard(
             playerId = currentPlayer.id,
             numberOfCardToTake = 1
-        )
-
-        processor.process(command, gameState, gameManager)
-
-        gameState.intermediateGameState `should equal` IntermediateGameState.PlayCard(
-            playerId = gameState.players[1].id,
-            numberOfCardToTake = 2
         )
     }
 }

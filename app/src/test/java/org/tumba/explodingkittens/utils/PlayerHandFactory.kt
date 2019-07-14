@@ -7,14 +7,19 @@ import kotlin.random.Random
 interface PlayerHandFactory {
 
     fun create(size: Int = 4): PlayerHand
+
+    companion object {
+
+        fun create(playerHandCreator: () -> PlayerHand): PlayerHandFactory {
+            return object : PlayerHandFactory {
+
+                override fun create(size: Int): PlayerHand = playerHandCreator.invoke()
+            }
+        }
+    }
 }
 
-class OneHandPlayerHandFactory(private val hand: PlayerHand) : PlayerHandFactory {
-
-    override fun create(size: Int): PlayerHand = hand
-}
-
-class RandomPlayerHandFactory(random: Random): PlayerHandFactory {
+class RandomPlayerHandFactory(random: Random) : PlayerHandFactory {
     private val cardFactory: CardFactory = CardFactory(random)
 
     override fun create(size: Int): PlayerHand {
