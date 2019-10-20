@@ -100,6 +100,8 @@ interface PlayerHand {
     fun remove(index: Int): Card
 
     fun add(card: Card)
+
+    fun size(): Int
 }
 
 class PlayerHandImpl(
@@ -119,6 +121,8 @@ class PlayerHandImpl(
     override fun add(card: Card) {
         cards.add(card)
     }
+
+    override fun size(): Int = cards.size
 }
 
 

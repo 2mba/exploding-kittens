@@ -18,7 +18,7 @@ class GameStateFactory(random: Random) {
         val drop = CardDropImpl()
 
         return GameState(
-            players = players,
+            players = players.toMutableList(),
             stack = stack,
             drop = drop,
             intermediateGameState = IntermediateGameState.PlayCard(

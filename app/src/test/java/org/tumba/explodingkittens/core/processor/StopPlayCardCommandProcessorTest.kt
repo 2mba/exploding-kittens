@@ -47,10 +47,11 @@ class StopPlayCardCommandProcessorTest {
         gameManager = GameManager(gameState)
 
         val player = gameState.players.first()
+        val playerHandSize = player.hand.size()
         val nextPlayer = gameState.players[1]
         gameState.intermediateGameState = IntermediateGameState.PlayCard(
             playerId = player.id,
-            numberOfCardToTake = 1
+            numberOfCardToTake = 2
         )
         command = StopPlayCardCommand(player.id)
         processor.process(command, gameState, gameManager)
@@ -59,6 +60,8 @@ class StopPlayCardCommandProcessorTest {
             playerId = nextPlayer.id,
             numberOfCardToTake = 1
         )
+        gameState.stack.size() `should equal` 0
+        gameManager.getPlayerById(player.id).hand.size() `should equal`  playerHandSize + 2
     }
 
     @Test(expected = IllegalStateException::class)

@@ -12,7 +12,7 @@ interface Game {
 }
 
 data class GameState(
-    val players: List<Player>,
+    val players: MutableList<Player>,
     val stack: CardStack,
     val drop: CardDrop,
     var intermediateGameState: IntermediateGameState
@@ -147,6 +147,17 @@ class GameManager(private val state: GameState) {
                     .firstOrNull { it.isAlive }
                     ?: throw IllegalStateException("No next player")
             }
+    }
+
+    fun getCardOfPlayer(player: Player, type: CardType): Card? {
+        return player.hand
+            .getAll()
+            .firstOrNull { card -> card.type == type }
+    }
+
+    fun removeCardOfPlayer(player: Player, card: Card) {
+        val hand = player.hand
+        hand.remove(hand.getAll().indexOf(card))
     }
 }
 
