@@ -36,7 +36,7 @@ class CardStackImpl(
     private val random: Random
 ) : CardStack {
 
-    private val cards: MutableList<Card> = cards.toMutableList()
+    private val cards: MutableList<Card> = cards.reversed().toMutableList()
 
     override fun pop(): Card {
         if (cards.isEmpty()) throw IllegalStateException("No cards in stack")

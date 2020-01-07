@@ -37,6 +37,11 @@ sealed class IntermediateGameState(
         }
     }
 
+    class InsertExplodeCardToStack(
+        playerId: Long,
+        numberOfCardToTake: Int
+    ) : IntermediateGameState(playerId, numberOfCardToTake)
+
     class TakeCard(
         playerId: Long,
         numberOfCardToTakeFromStack: Int

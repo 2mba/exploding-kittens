@@ -8,7 +8,6 @@ interface PlayerFactory {
     fun create(): Player
 }
 
-
 class PlayerFactoryImpl(random: Random) : PlayerFactory {
 
     var playerHandFactory: PlayerHandFactory = RandomPlayerHandFactory(random)
@@ -20,7 +19,7 @@ class PlayerFactoryImpl(random: Random) : PlayerFactory {
             id = id,
             name = "PlayerName-$id",
             isAlive = true,
-            hand = playerHandFactory.create()
+            hand = playerHandFactory.create(id)
         )
     }
 }
