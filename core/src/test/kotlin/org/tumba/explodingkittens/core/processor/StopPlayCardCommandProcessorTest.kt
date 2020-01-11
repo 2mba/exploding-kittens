@@ -7,6 +7,7 @@ import org.tumba.explodingkittens.core.CardType
 import org.tumba.explodingkittens.core.GameManager
 import org.tumba.explodingkittens.core.GameState
 import org.tumba.explodingkittens.core.IntermediateGameState
+import org.tumba.explodingkittens.core.utils.*
 import org.tumba.explodingkittens.utils.*
 import kotlin.random.Random
 

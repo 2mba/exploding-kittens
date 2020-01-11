@@ -3,7 +3,7 @@ package org.tumba.explodingkittens.core
 import org.amshove.kluent.*
 import org.junit.Before
 import org.junit.Test
-import org.tumba.explodingkittens.utils.CardFactory
+import org.tumba.explodingkittens.core.utils.CardFactory
 import kotlin.random.Random
 
 class CardStackImplTest {

@@ -4,10 +4,10 @@ import org.amshove.kluent.`should equal`
 import org.junit.Before
 import org.junit.Test
 import org.tumba.explodingkittens.core.*
-import org.tumba.explodingkittens.utils.CardFactory
-import org.tumba.explodingkittens.utils.GameStateFactory
-import org.tumba.explodingkittens.utils.PlayerFactoryImpl
-import org.tumba.explodingkittens.utils.PlayerHandFactory
+import org.tumba.explodingkittens.core.utils.CardFactory
+import org.tumba.explodingkittens.core.utils.GameStateFactory
+import org.tumba.explodingkittens.core.utils.PlayerFactoryImpl
+import org.tumba.explodingkittens.core.utils.PlayerHandFactory
 import kotlin.random.Random
 
 class PlayCardCommandProcessorTest {

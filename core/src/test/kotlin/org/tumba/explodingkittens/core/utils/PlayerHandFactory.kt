@@ -1,4 +1,4 @@
-package org.tumba.explodingkittens.utils
+package org.tumba.explodingkittens.core.utils
 
 import org.tumba.explodingkittens.core.Card
 import org.tumba.explodingkittens.core.PlayerHand
