@@ -31,7 +31,7 @@ interface CardStack {
     fun put(index: Int, card: Card)
 }
 
-class CardStackImpl(
+internal class CardStackImpl(
     cards: List<Card> = emptyList(),
     private val random: Random
 ) : CardStack {
@@ -67,7 +67,7 @@ interface CardDrop {
     fun remove(index: Int): Card
 }
 
-class CardDropImpl(
+internal class CardDropImpl(
     cards: List<Card> = emptyList()
 ) : CardDrop {
 
@@ -81,6 +81,12 @@ class CardDropImpl(
 
     override fun remove(index: Int): Card {
         return cards.removeAt(index)
+    }
+
+    companion object {
+        fun empty(): CardDropImpl {
+            return CardDropImpl(cards = emptyList())
+        }
     }
 }
 
@@ -104,7 +110,7 @@ interface PlayerHand {
     fun size(): Int
 }
 
-class PlayerHandImpl(
+internal class PlayerHandImpl(
     cards: List<Card> = emptyList()
 ) : PlayerHand {
 
@@ -123,6 +129,16 @@ class PlayerHandImpl(
     }
 
     override fun size(): Int = cards.size
+
+    override fun toString(): String {
+        return "PlayerHandImpl(cards=$cards)"
+    }
+
+    companion object {
+        fun empty(): PlayerHandImpl {
+            return PlayerHandImpl(cards = emptyList())
+        }
+    }
 }
 
 

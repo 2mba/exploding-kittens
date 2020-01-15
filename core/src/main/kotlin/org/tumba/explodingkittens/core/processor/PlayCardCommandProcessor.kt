@@ -38,6 +38,7 @@ abstract class SingleCardPlayCardProcessor(
 
     override fun process(player: Player, card: Card, gameState: GameState, gameManager: GameManager) {
         if (cardTypeForProcess == card.type) {
+            gameManager.event("${player.name} is playing attack $card")
             processCard(player, card, gameState, gameManager)
         }
     }

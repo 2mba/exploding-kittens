@@ -24,9 +24,9 @@ class BatchGameCommandProcessorTest {
         }
 
         processors = commands.map { command ->
-            val proccessor = mockk<GameCommandProcessor>(relaxed = true)
-            every { proccessor.commandId } answers { command.id }
-            proccessor
+            val processor = mockk<GameCommandProcessor>(relaxed = true)
+            every { processor.commandId } answers { command.id }
+            processor
         }
         processor = BatchGameCommandProcessor(processors)
     }

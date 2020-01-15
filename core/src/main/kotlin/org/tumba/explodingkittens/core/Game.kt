@@ -2,6 +2,8 @@ package org.tumba.explodingkittens.core
 
 interface Game {
 
+    var eventListener: (String) -> Unit
+
     val state: GameState
 
     fun init()
@@ -16,7 +18,12 @@ data class GameState(
     val stack: CardStack,
     val drop: CardDrop,
     var intermediateGameState: IntermediateGameState
-)
+) {
+
+    override fun toString(): String {
+        return "GameState(\n\tplayers=$players,\n\tstack=$stack,\n\tdrop=$drop,\n\tintermediateGameState=$intermediateGameState\n)"
+    }
+}
 
 sealed class IntermediateGameState(
     val playerId: Long,
@@ -106,7 +113,14 @@ sealed class IntermediateGameState(
     }
 }
 
-class GameManager(private val state: GameState) {
+class GameManager(
+    private val state: GameState,
+    private val eventListener: (String) -> Unit = { }
+) {
+
+    fun event(event: String) {
+        eventListener.invoke(event)
+    }
 
     fun ensureStateThat(matcher: (IntermediateGameState) -> Boolean) {
         ensureStateThat(
@@ -124,6 +138,7 @@ class GameManager(private val state: GameState) {
 
     fun setIntermediateState(state: IntermediateGameState) {
         this.state.intermediateGameState = state
+        eventListener.invoke("State changed to $state")
     }
 
     fun getPlayerById(id: Long): Player {
@@ -166,10 +181,12 @@ class GameManager(private val state: GameState) {
     }
 }
 
-class GameImpl(
+internal class GameImpl(
     state: GameState,
     private val commandProcessor: GameCommandProcessor
 ) : Game {
+
+    override var eventListener: (String) -> Unit = { }
 
     private var _state: GameState = state
 
@@ -177,16 +194,15 @@ class GameImpl(
         get() = _state
 
     override fun init() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun initFrom(state: GameState) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun executeCommand(command: GameCommand) {
-        commandProcessor.process(command, _state,
-            GameManager(_state)
+        commandProcessor.process(
+            command, _state,
+            GameManager(_state, eventListener)
         )
     }
 }

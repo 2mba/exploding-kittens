@@ -23,6 +23,7 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
         gameManager.ensureStateThat(
             Is(PlayCard::class.java) and { state -> state.playerId == command.playerId }
         )
+        gameManager.event("${gameManager.currentPlayer().name} stop playing card and take cards")
         when (takeCards(gameState, gameManager)) {
             TakeCardResult.OK -> {
                 setNextPlayerPlayCardState(gameManager)
@@ -51,8 +52,10 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
 
     private fun takeCard(gameState: GameState, gameManager: GameManager): TakeCardResult {
         val card = gameState.stack.pop()
+        gameManager.event("${gameManager.currentPlayer().name} has taken card $card")
         return if (card.type == CardType.EXPLODE) {
             if (tryDefuse(gameManager)) {
+                gameManager.event("${gameManager.currentPlayer().name} has defused exploding kitten")
                 TakeCardResult.DEFUSED
             } else {
                 explodePlayer(gameState, gameManager)
@@ -76,6 +79,7 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
         val deadPlayer = gameManager.currentPlayer().copy(isAlive = false)
         val indexOfCurrentPlayer = gameState.players.indexOf(gameManager.currentPlayer())
         gameState.players[indexOfCurrentPlayer] = deadPlayer
+        gameManager.event("${gameManager.currentPlayer().name} has been exploded")
     }
 
     private fun setInsertCardState(gameManager: GameManager) {
@@ -92,6 +96,7 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
             numberOfCardToTake = 1
         )
         gameManager.setIntermediateState(newState)
+        gameManager.event("Next player turn")
     }
 
     private enum class TakeCardResult {
