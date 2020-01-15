@@ -46,7 +46,8 @@ sealed class IntermediateGameState(
 
     class InsertExplodeCardToStack(
         playerId: Long,
-        numberOfCardToTake: Int
+        numberOfCardToTake: Int,
+        val explodeCard: Card
     ) : IntermediateGameState(playerId, numberOfCardToTake)
 
     class TakeCard(

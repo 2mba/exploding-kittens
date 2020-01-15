@@ -6,11 +6,14 @@ import org.tumba.explodingkittens.core.Player
 import org.tumba.explodingkittens.core.factory.GameFactory
 import org.tumba.explodingkittens.core.factory.InitialGameStateFactory
 import org.tumba.explodingkittens.core.factory.PlayerHandFactory
+import org.tumba.explodingkittens.core.processor.InsertExplodeCardToStackCommand
 import org.tumba.explodingkittens.core.processor.StopPlayCardCommand
 import kotlin.random.Random
 
+
 fun main() {
-    val game = createGame()
+    val random = Random(0)
+    val game = createGame(random)
     game.eventListener = { println(it) }
 
     outerLoop@ while (true) {
@@ -19,9 +22,19 @@ fun main() {
             is IntermediateGameState.PlayCard -> {
                 game.executeCommand(StopPlayCardCommand(intermediateGameState.playerId))
             }
-            /*is IntermediateGameState.TakeCard -> {
-
-            }*/
+            is IntermediateGameState.InsertExplodeCardToStack -> {
+                game.executeCommand(
+                    InsertExplodeCardToStackCommand(
+                        playerId = intermediateGameState.playerId,
+                        insertionIndex = if (game.state.stack.size() == 0) {
+                            0
+                        } else {
+                            random.nextInt(game.state.stack.size())
+                        },
+                        showCardInsertionPlacement = true
+                    )
+                )
+            }
             else -> {
                 break@outerLoop
             }
@@ -29,8 +42,7 @@ fun main() {
     }
 }
 
-private fun createGame(): Game {
-    val random = Random(0)
+private fun createGame(random: Random): Game {
     val playerHandFactory = PlayerHandFactory()
     val players = listOf(
         Player(0, "Player 0", true, playerHandFactory.createPlayerHand()),

@@ -56,6 +56,10 @@ internal class CardStackImpl(
     override fun put(index: Int, card: Card) {
         cards.add(index, card)
     }
+
+    override fun toString(): String {
+        return "CardStackImpl(cards=$cards)"
+    }
 }
 
 interface CardDrop {
@@ -81,6 +85,10 @@ internal class CardDropImpl(
 
     override fun remove(index: Int): Card {
         return cards.removeAt(index)
+    }
+
+    override fun toString(): String {
+        return "CardDropImpl(cards=$cards)"
     }
 
     companion object {

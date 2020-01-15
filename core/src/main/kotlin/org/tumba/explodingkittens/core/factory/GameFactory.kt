@@ -1,10 +1,7 @@
 package org.tumba.explodingkittens.core.factory
 
 import org.tumba.explodingkittens.core.*
-import org.tumba.explodingkittens.core.processor.AttackCardProcessor
-import org.tumba.explodingkittens.core.processor.PlayCardCommandProcessor
-import org.tumba.explodingkittens.core.processor.SkipCardProcessor
-import org.tumba.explodingkittens.core.processor.StopPlayCardCommandProcessor
+import org.tumba.explodingkittens.core.processor.*
 import kotlin.random.Random
 
 interface GameFactory {
@@ -145,7 +142,8 @@ private class GameCommandProcessorFactory {
                         AttackCardProcessor()
                     )
                 ),
-                StopPlayCardCommandProcessor()
+                StopPlayCardCommandProcessor(),
+                InsertExplodeCardToStackCommandProcessor()
             )
         )
     }
