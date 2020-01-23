@@ -109,6 +109,17 @@ sealed class IntermediateGameState(
         return result
     }
 
+    class Win(
+        playerId: Long
+    ) : IntermediateGameState(
+        playerId = playerId,
+        numberOfCardToTakeFromStack = 0
+    ) {
+        override fun toString(): String {
+            return "Win(playerId=$playerId)"
+        }
+    }
+
     override fun toString(): String {
         return "IntermediateGameState(playerId=$playerId, numberOfCardToTakeFromStack=$numberOfCardToTakeFromStack)"
     }

@@ -32,7 +32,11 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
                 setInsertCardState(gameManager, result.explodeCard)
             }
             is TakeCardResult.Exploded -> {
-                setNextPlayerPlayCardState(gameManager)
+                if (isAliveOnlyOnePlayer(gameState)) {
+                    setWinState(gameManager, gameState)
+                } else {
+                    setNextPlayerPlayCardState(gameManager)
+                }
             }
         }
     }
@@ -91,6 +95,10 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
         gameManager.setIntermediateState(newState)
     }
 
+    private fun isAliveOnlyOnePlayer(gameState: GameState): Boolean {
+        return gameState.players.count { it.isAlive } == 1
+    }
+
     private fun setNextPlayerPlayCardState(gameManager: GameManager) {
         val newState = PlayCard(
             playerId = gameManager.nextPlayer().id,
@@ -98,6 +106,13 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
         )
         gameManager.setIntermediateState(newState)
         gameManager.event("Next player turn")
+    }
+
+    private fun setWinState(gameManager: GameManager, gameState: GameState) {
+        val winnerPlayerId = gameState.players.first { it.isAlive }.id
+        val newState = IntermediateGameState.Win(winnerPlayerId)
+        gameManager.setIntermediateState(newState)
+        gameManager.event("${gameManager.getPlayerById(winnerPlayerId).name} is winner!!!")
     }
 
     private sealed class TakeCardResult {

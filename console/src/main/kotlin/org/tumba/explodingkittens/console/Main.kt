@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 
 fun main() {
-    val random = Random(0)
+    val random = Random(System.currentTimeMillis())
     val game = createGame(random)
     game.eventListener = { println(it) }
 
@@ -45,9 +45,9 @@ fun main() {
 private fun createGame(random: Random): Game {
     val playerHandFactory = PlayerHandFactory()
     val players = listOf(
-        Player(0, "Player 0", true, playerHandFactory.createPlayerHand()),
-        Player(1, "Player 1", true, playerHandFactory.createPlayerHand()),
-        Player(2, "Player 2", true, playerHandFactory.createPlayerHand())
+        Player(0, "Баира", true, playerHandFactory.createPlayerHand()),
+        Player(1, "Павел", true, playerHandFactory.createPlayerHand()),
+        Player(2, "Олечка", true, playerHandFactory.createPlayerHand())
     )
     val gameFactory = GameFactory.create(
         gameStateFactory = InitialGameStateFactory(players, random)
