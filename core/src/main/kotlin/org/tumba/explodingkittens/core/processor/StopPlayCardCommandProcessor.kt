@@ -29,7 +29,9 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
                 setNextPlayerPlayCardState(gameManager)
             }
             is TakeCardResult.Defused -> {
-                setInsertCardState(gameManager, result.explodeCard)
+                val playCardGateState = gameState.intermediateGameState as PlayCard
+                val newNumberOfCardToTake = playCardGateState.numberOfCardToTakeFromStack - 1
+                setInsertCardState(gameManager, result.explodeCard, newNumberOfCardToTake)
             }
             is TakeCardResult.Exploded -> {
                 if (isAliveOnlyOnePlayer(gameState)) {
@@ -43,9 +45,13 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
 
     private fun takeCards(gameState: GameState, gameManager: GameManager): TakeCardResult {
         val state = gameState.intermediateGameState as PlayCard
+        var remainCardsToGetFromStack = state.numberOfCardToTakeFromStack
         repeat(state.numberOfCardToTakeFromStack) {
+            remainCardsToGetFromStack--
             when (val takeCardResult = takeCard(gameState, gameManager)) {
-                is TakeCardResult.Defused,
+                is TakeCardResult.Defused -> {
+                    return TakeCardResult.Defused(takeCardResult.explodeCard, remainCardsToGetFromStack)
+                }
                 is TakeCardResult.Exploded -> {
                     return takeCardResult
                 }
@@ -60,7 +66,7 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
         return if (card.type == CardType.EXPLODE) {
             if (tryDefuse(gameManager)) {
                 gameManager.event("${gameManager.currentPlayer().name} has defused exploding kitten")
-                TakeCardResult.Defused(card)
+                TakeCardResult.Defused(card, remainCardsToGetFromStack = 0)
             } else {
                 explodePlayer(gameState, gameManager)
                 TakeCardResult.Exploded
@@ -86,10 +92,14 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
         gameManager.event("${gameManager.currentPlayer().name} has been exploded")
     }
 
-    private fun setInsertCardState(gameManager: GameManager, explodeCard: Card) {
+    private fun setInsertCardState(
+        gameManager: GameManager,
+        explodeCard: Card,
+        numberOfCardToTake: Int
+    ) {
         val newState = InsertExplodeCardToStack(
             playerId = gameManager.currentPlayer().id,
-            numberOfCardToTake = 1,
+            numberOfCardToTake = numberOfCardToTake,
             explodeCard = explodeCard
         )
         gameManager.setIntermediateState(newState)
@@ -117,7 +127,10 @@ class StopPlayCardCommandProcessor : TypedGameCommandProcessor<StopPlayCardComma
 
     private sealed class TakeCardResult {
         object Exploded : TakeCardResult()
-        class Defused(val explodeCard: Card): TakeCardResult()
+        class Defused(
+            val explodeCard: Card,
+            val remainCardsToGetFromStack: Int
+        ) : TakeCardResult()
         object Ok : TakeCardResult()
     }
 }

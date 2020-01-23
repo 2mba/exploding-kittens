@@ -28,7 +28,7 @@ class CardStackImplTest {
     }
 
     @Test
-    fun `pop should return last element`() {
+    fun `pop should return first element`() {
         stack.pop() `should equal` cards[0]
         stack.size() `should equal` 1
         stack.pop() `should equal` cards[1]
@@ -47,10 +47,10 @@ class CardStackImplTest {
     }
 
     @Test
-    fun `peek should return last elements`() {
+    fun `peek should return first elements`() {
         stack.peek(1) `should equal` listOf(cards[0])
-        stack.peek(2) `should equal` listOf(cards[1], cards[0])
-        stack.peek(3) `should equal` listOf(cards[1], cards[0])
+        stack.peek(2) `should equal` listOf(cards[0], cards[1])
+        stack.peek(3) `should equal` listOf(cards[0], cards[1])
     }
 
     @Test

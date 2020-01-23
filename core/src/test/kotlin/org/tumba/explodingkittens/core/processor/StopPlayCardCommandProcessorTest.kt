@@ -8,7 +8,6 @@ import org.tumba.explodingkittens.core.GameManager
 import org.tumba.explodingkittens.core.GameState
 import org.tumba.explodingkittens.core.IntermediateGameState
 import org.tumba.explodingkittens.core.utils.*
-import org.tumba.explodingkittens.utils.*
 import kotlin.random.Random
 
 class StopPlayCardCommandProcessorTest {
@@ -112,10 +111,11 @@ class StopPlayCardCommandProcessorTest {
     @Test
     fun `should not explode when get explode card and defuse`() {
         // Arrange
+        val explodeCard = cardFactory.createOfType(CardType.EXPLODE)
         gameStateFactory = GameStateFactory(random).apply {
             cardStackFactory = SimpleCardStackFactory(
                 cards = listOf(
-                    cardFactory.createOfType(CardType.EXPLODE),
+                    explodeCard,
                     cardFactory.createOfType(CardType.NONE),
                     cardFactory.createOfType(CardType.NONE)
                 ),
@@ -137,7 +137,7 @@ class StopPlayCardCommandProcessorTest {
         val player = gameState.players.first()
         gameState.intermediateGameState = IntermediateGameState.PlayCard(
             playerId = player.id,
-            numberOfCardToTake = 2
+            numberOfCardToTake = 3
         )
         command = StopPlayCardCommand(player.id)
 
@@ -147,7 +147,8 @@ class StopPlayCardCommandProcessorTest {
         // Assert
         gameState.intermediateGameState `should equal` IntermediateGameState.InsertExplodeCardToStack(
             playerId = player.id,
-            numberOfCardToTake = 1
+            numberOfCardToTake = 2,
+            explodeCard = explodeCard
         )
         gameState.stack.size() `should equal` 2
         val currentPlayer = gameManager.getPlayerById(player.id)

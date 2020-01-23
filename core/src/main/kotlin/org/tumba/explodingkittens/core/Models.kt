@@ -36,15 +36,15 @@ internal class CardStackImpl(
     private val random: Random
 ) : CardStack {
 
-    private val cards: MutableList<Card> = cards.reversed().toMutableList()
+    private val cards: MutableList<Card> = cards.toMutableList()
 
     override fun pop(): Card {
         if (cards.isEmpty()) throw IllegalStateException("No cards in stack")
-        return cards.removeAt(cards.lastIndex)
+        return cards.removeAt(0)
     }
 
     override fun peek(count: Int): List<Card> {
-        return cards.takeLast(count)
+        return cards.take(count)
     }
 
     override fun size(): Int = cards.size

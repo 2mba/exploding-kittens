@@ -32,9 +32,16 @@ class InsertExplodeCardToStackCommandProcessor : TypedGameCommandProcessor<Inser
             gameState.stack.put(gameState.stack.size(), intermediateGameState.explodeCard)
         }
         gameManager.event("${gameManager.currentPlayer().name} insert explode card to ${command.insertionIndex}")
-        setNextPlayerPlayCardState(gameManager)
-    }
 
+        if (intermediateGameState.numberOfCardToTakeFromStack == 0) {
+            setNextPlayerPlayCardState(gameManager)
+        } else {
+            setCurrentPlayerPlayCardState(
+                gameManager = gameManager,
+                numberOfCardToTake = intermediateGameState.numberOfCardToTakeFromStack
+            )
+        }
+    }
 
     private fun setNextPlayerPlayCardState(gameManager: GameManager) {
         val newState = PlayCard(
@@ -45,9 +52,12 @@ class InsertExplodeCardToStackCommandProcessor : TypedGameCommandProcessor<Inser
         gameManager.event("Next player turn")
     }
 
-    private enum class TakeCardResult {
-        EXPLODED,
-        DEFUSED,
-        OK
+    private fun setCurrentPlayerPlayCardState(gameManager: GameManager, numberOfCardToTake: Int) {
+        val newState = PlayCard(
+            playerId = gameManager.currentPlayer().id,
+            numberOfCardToTake = numberOfCardToTake
+        )
+        gameManager.setIntermediateState(newState)
+        gameManager.event("Current player turn")
     }
 }
